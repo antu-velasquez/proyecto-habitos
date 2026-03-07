@@ -13,7 +13,7 @@ Este proyecto es una herramienta para ayudar a las personas a crear y controlar 
 
 1. Clonar el repositorio y situarse en la rama **semanal**.
 2. Ejecutar el comando **npm install** para instalar todas las dependencias necesarias.
-3. Crear un archivo **.env** en la raíz y configurar la variable **MONGO_URI** con tu cadena de conexión (asegúrate de que la IP esté habilitada en Atlas).
+3. Crear un archivo **.env** en la raíz y configurar la variable **MONGO_URI** con tu cadena de conexión (asegúrese de que la IP esté habilitada en Atlas).
 
 ## Ejecución.
 
