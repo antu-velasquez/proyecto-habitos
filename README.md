@@ -1,4 +1,4 @@
-# Proyecto Control de Hábitos - Semana 2.
+# Proyecto Control de Hábitos.
 
 Este proyecto es una aplicación full stack para el control de hábitos (basado en "Hábitos Atómicos").
 
@@ -19,4 +19,4 @@ Este proyecto es una aplicación full stack para el control de hábitos (basado 
 2. Entrar a la carpeta: `cd frontend`
 3. Instalar dependencias: `npm install`
 4. Ejecutar la aplicación: `npm run dev`
-5. Abrir [http://localhost:3000](http://localhost:3000) en tu navegador.
+5. Abrir [http://localhost:3000](http://localhost:3000) en el navegador.
