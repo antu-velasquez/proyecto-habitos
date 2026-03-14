@@ -1,4 +1,4 @@
-# Proyecto Gestión de Hábitos - Semana 2.
+# Proyecto Control de Hábitos - Semana 2.
 
 Este proyecto es una aplicación full stack para el control de hábitos (basado en "Hábitos Atómicos").
 
