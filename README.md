@@ -1,22 +1,34 @@
-# Proyecto Control de Hábitos.
+# Proyecto Control de Hábitos
 
-Este proyecto es una aplicación full stack para el control de hábitos (basado en "Hábitos Atómicos").
+Aplicación Full Stack para la gestión de hábitos diarios basada en "Hábitos Atómicos".
 
-## Estructura del proyecto.
+## Entrega para la semana 3
 
-- `/backend`: Servidor en Express.js y conexión a MongoDB Atlas.
-- `/frontend`: Interfaz en Next.js con gestión de estados mediante Redux Toolkit.
+Se han implementado los siguientes requerimientos:
+- **Tailwind CSS**: Integración de la librería para el diseño del frontend.
+- **Redux Toolkit**: Gestión de estado global para una lista de hábitos dinámica.
+- **Componentes UI**: Inclusión de barra de progreso (hacia los 66 días) y botón Done.
 
-## Instrucciones de ejecución.
+## Estructura
 
-### 1. Backend.
-1. Entrar a la carpeta: `cd backend`
-2. Instalar dependencias: `npm install`
-3. Ejecutar el servidor: `node index.js`
+- **/backend**: Servidor en Express.js y conexión a MongoDB Atlas.
+- **/frontend**: Interfaz de usuario en Next.js.
 
-### 2. Frontend.
-1. Abrir una nueva terminal.
-2. Entrar a la carpeta: `cd frontend`
-3. Instalar dependencias: `npm install`
-4. Ejecutar la aplicación: `npm run dev`
-5. Abrir [http://localhost:3000](http://localhost:3000) en el navegador.
+## Ejecución
+
+### 1. Backend
+
+1. `cd backend`
+2. `npm install`
+3. `node index.js`
+
+### 2. Frontend
+
+1. `cd frontend`
+2. `npm install`
+3. `npm run dev`
+4. Abrir [http://localhost:3000](http://localhost:3000)
+
+---
+
+*Nota: Es necesario configurar el archivo `.env` en el backend para la conexión a la base de datos.*
