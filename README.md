@@ -11,8 +11,6 @@ En esta fase se integró un sistema completo de seguridad y autorización:
 * **Envío de JWT**: Configuración de Redux para adjuntar automáticamente el x-auth-token en cada petición al servidor.
 * **Flujo Protegido**: Restricción de acceso al dashboard principal para que solo usuarios logueados puedan ver y gestionar sus hábitos.
 
-Se han implementado los siguientes requerimientos:
-
 ## Estructura.
 
 - **/backend**: Servidor en Express.js, seguridad con Bcrypt y conexión a MongoDB Atlas.
