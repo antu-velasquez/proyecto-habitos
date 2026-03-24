@@ -1,29 +1,31 @@
-# Proyecto Control de Hábitos
+# Proyecto Control de Hábitos.
 
 Aplicación para la gestión de hábitos diarios basada en "Hábitos Atómicos".
 
-## Ediciones para la semana 4
+## Entrega Semana 5.
+
+En esta fase se integró un sistema completo de seguridad y autorización:
+
+* **Seguridad en Backend**: Implementación de un middleware para validar tokens JWT en todas las rutas de hábitos.
+* **Auth desde el Frontend**: Creación de interfaces para registro y login en Next.js que gestionan la persistencia del token.
+* **Envío de JWT**: Configuración de Redux para adjuntar automáticamente el x-auth-token en cada petición al servidor.
+* **Flujo Protegido**: Restricción de acceso al dashboard principal para que solo usuarios logueados puedan ver y gestionar sus hábitos.
 
 Se han implementado los siguientes requerimientos:
 
-- **Seguridad (Auth)**: Registro de usuarios con contraseñas protegidas mediante el proceso de hashing con `bcryptjs`.
-- **Lógica de racha**: El backend ahora controla el conteo de días y reinicia el progreso automáticamente si se interrumpe la constancia.
-- **Botón Done e interactividad**: Implementación funcional del botón para marcar tareas, enviando actualizaciones PATCH que Redux gestiona en tiempo real.
-- **Barra de progreso**: Visualización dinámica que cambia de rojo a verde conforme el usuario se acerca a la meta de los 66 días.
-
-## Estructura
+## Estructura.
 
 - **/backend**: Servidor en Express.js, seguridad con Bcrypt y conexión a MongoDB Atlas.
 - **/frontend**: Interfaz de usuario en Next.js con gestión de estado en Redux.
 
-## Ejecución
+## Ejecución.
 
-### 1. Backend
+### 1. Backend.
 1. `cd backend`
 2. `npm install`
 3. `node index.js`
 
-### 2. Frontend
+### 2. Frontend.
 1. `cd frontend`
 2. `npm install`
 3. `npm run dev`

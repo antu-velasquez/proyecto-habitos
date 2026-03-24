@@ -1,24 +1,25 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs'); // Para HASH de contraseñas.
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const Habit = require('./models/Habit');
-const User = require('./models/User'); 
+const User = require('./models/User');
+const auth = require('./middleware/auth');
 
 const app = express();
 app.use(express.json());
 
-// Conexión a MongoDB Atlas.
+// Conexión a la base de datos.
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Conexión exitosa a MongoDB Atlas'))
   .catch((err) => console.error('Error de conexión:', err));
 
-// --- Registro con HASH. ---
+// Registro de nuevos usuarios.
 app.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
-        // Generar HASH para guardar contraseña.
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -28,15 +29,50 @@ app.post('/register', async (req, res) => {
     } catch (error) { res.status(400).json({ message: error.message }); }
 });
 
-// --- Lógica de racha. ---
-app.patch('/habitos/:id/done', async (req, res) => {
+// Login con entrega de token JWT.
+app.post('/login', async (req, res) => {
     try {
-        const habit = await Habit.findById(req.params.id);
+        const { username, password } = req.body;
+        const usuario = await User.findOne({ username });
+        if (!usuario) return res.status(400).json({ message: "Usuario no encontrado" });
+
+        const esValido = await bcrypt.compare(password, usuario.password);
+        if (!esValido) return res.status(400).json({ message: "Contraseña incorrecta" });
+
+        const payload = { user: { id: usuario.id } };
+        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
+            if (err) throw err;
+            res.json({ token });
+        });
+    } catch (error) { res.status(500).json({ message: error.message }); }
+});
+
+// Obtener solo los hábitos del usuario autenticado.
+app.get('/habitos', auth, async (req, res) => {
+    try {
+        const habitos = await Habit.find({ user: req.user.id });
+        res.json(habitos);
+    } catch (error) { res.status(500).json({ message: error.message }); }
+});
+
+// Crear hábito vinculado al usuario actual.
+app.post('/habitos', auth, async (req, res) => {
+    try {
+        const nuevoHabito = new Habit({ ...req.body, user: req.user.id });
+        await nuevoHabito.save();
+        res.status(201).json(nuevoHabito);
+    } catch (error) { res.status(400).json({ message: error.message }); }
+});
+
+// Actualizar racha asegurando propiedad del hábito.
+app.patch('/habitos/:id/done', auth, async (req, res) => {
+    try {
+        const habit = await Habit.findOne({ _id: req.params.id, user: req.user.id });
+        if (!habit) return res.status(404).json({ message: "Hábito no encontrado" });
+
         const hoy = new Date();
-        
         if (habit.lastCompleted) {
             const diff = (hoy - habit.lastCompleted) / (1000 * 60 * 60 * 24);
-            // Si pasó más de 1 día y medio, se reinicia la racha.
             habit.daysCount = diff > 1.5 ? 1 : habit.daysCount + 1;
         } else {
             habit.daysCount = 1;
@@ -48,27 +84,13 @@ app.patch('/habitos/:id/done', async (req, res) => {
     } catch (error) { res.status(400).json({ message: error.message }); }
 });
 
-// --- Otros Endpoints. ---
-app.post('/habitos', async (req, res) => {
+// Eliminar solo hábitos propios.
+app.delete('/habitos/:id', auth, async (req, res) => {
     try {
-        const nuevoHabito = new Habit(req.body);
-        await nuevoHabito.save();
-        res.status(201).json(nuevoHabito);
-    } catch (error) { res.status(400).json({ message: error.message }); }
-});
-
-app.delete('/habitos/:id', async (req, res) => {
-    try {
-        await Habit.findByIdAndDelete(req.params.id);
+        const resultado = await Habit.findOneAndDelete({ _id: req.params.id, user: req.user.id });
+        if (!resultado) return res.status(404).json({ message: "No autorizado o no existe" });
         res.json({ message: "Hábito eliminado" });
     } catch (error) { res.status(500).json({ message: error.message }); }
-});
-
-app.put('/habitos/:id', async (req, res) => {
-    try {
-        const habitoActualizado = await Habit.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.json(habitoActualizado);
-    } catch (error) { res.status(400).json({ message: error.message }); }
 });
 
 const PORT = process.env.PORT || 5000;

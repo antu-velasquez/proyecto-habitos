@@ -1,9 +1,38 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-// Obtener hábitos del backend.
+// Obtener solo los hábitos del usuario identificado.
 export const fetchHabits = createAsyncThunk('habits/fetchHabits', async () => {
-  const response = await fetch('http://localhost:5000/habitos'); // Puerto en que corre el backend.
+  const token = localStorage.getItem('token');
+  const response = await fetch('http://localhost:5000/habitos', {
+    headers: { 'x-auth-token': token } // Enviar el JWT para identificación.
+  });
   if (!response.ok) throw new Error('Error al obtener los hábitos');
+  return await response.json();
+});
+
+// Registrar un día completado en el servidor.
+export const updateHabitStatus = createAsyncThunk('habits/updateHabitStatus', async (id) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`http://localhost:5000/habitos/${id}/done`, {
+    method: 'PATCH',
+    headers: { 'x-auth-token': token }
+  });
+  if (!response.ok) throw new Error('Error al actualizar la racha');
+  return await response.json();
+});
+
+// Acción para agregar un nuevo hábito.
+export const addHabit = createAsyncThunk('habits/addHabit', async (newHabit) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch('http://localhost:5000/habitos', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-auth-token': token
+    },
+    body: JSON.stringify(newHabit),
+  });
+  if (!response.ok) throw new Error('No se pudo guardar el hábito');
   return await response.json();
 });
 
@@ -14,36 +43,12 @@ const habitSlice = createSlice({
     loading: false,
     error: null
   },
-  reducers: {
-    // Verificar los 66 días y marcar como completado.
-    completeDay: (state, action) => {
-      const habit = state.items.find(h => h._id === action.payload);
-      if (habit) {
-        // Reiniciar conteo si pasan más de 24h sin marcar.
-        habit.daysCount += 1;
-        
-        // Cálculo del progreso para la barra.
-        habit.progress = Math.min((habit.daysCount / 66) * 100, 100);
-        
-        // Color de la barra.
-        if (habit.daysCount < 21) {
-          habit.statusColor = 'bg-red-500'; // Rojo al inicio.
-        } else if (habit.daysCount < 66) {
-          habit.statusColor = 'bg-yellow-500'; // Transición.
-        } else {
-          habit.statusColor = 'bg-green-500'; // Verde al llegar a la meta.
-        }
-      }
-    }
-  },
+  reducers: {}, // Las acciones se manejan en extraReducers por ser asíncronas.
   extraReducers: (builder) => {
     builder
-      .addCase(fetchHabits.pending, (state) => {
-        state.loading = true;
-      })
+      // Carga inicial de hábitos.
       .addCase(fetchHabits.fulfilled, (state, action) => {
         state.loading = false;
-        // Calcular el color inicial para cada hábito.
         state.items = action.payload.map(habit => ({
           ...habit,
           progress: (habit.daysCount / 66) * 100,
@@ -51,12 +56,24 @@ const habitSlice = createSlice({
                        habit.daysCount >= 21 ? 'bg-yellow-500' : 'bg-red-500'
         }));
       })
-      .addCase(fetchHabits.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
+      // Actualizar racha tras el clic en Done.
+      .addCase(updateHabitStatus.fulfilled, (state, action) => {
+        const index = state.items.findIndex(h => h._id === action.payload._id);
+        if (index !== -1) {
+          const updatedHabit = action.payload;
+          state.items[index] = {
+            ...updatedHabit,
+            progress: (updatedHabit.daysCount / 66) * 100,
+            statusColor: updatedHabit.daysCount >= 66 ? 'bg-green-500' : 
+                         updatedHabit.daysCount >= 21 ? 'bg-yellow-500' : 'bg-red-500'
+          };
+        }
+      })
+      // Agregar nuevo hábito a la lista visual.
+      .addCase(addHabit.fulfilled, (state, action) => {
+        state.items.push(action.payload);
       });
   }
 });
 
-export const { completeDay } = habitSlice.actions;
 export default habitSlice.reducer;

@@ -1,15 +1,30 @@
 'use client';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateHabitStatus } from '../store/habitSlice'; // Asegúrate de tener esta acción creada
+import { useRouter } from 'next/navigation';
+import { updateHabitStatus, fetchHabits } from '../store/habitSlice';
 
 export default function HomePage() {
   const dispatch = useDispatch();
-  const { items: habits } = useSelector((state) => state.habits);
+  const router = useRouter();
+  const { items: habits, loading } = useSelector((state) => state.habits);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    // Redirigir al login si no hay token.
+    if (!token) {
+      router.push('/login');
+    } else {
+      // Cargar los hábitos específicos del usuario.
+      dispatch(fetchHabits());
+    }
+  }, [dispatch, router]);
 
   const handleDone = (id) => {
-    // Enviar el PATCH al backend.
     dispatch(updateHabitStatus(id));
   };
+
+  if (loading) return <p className="text-center p-10">Cargando tus hábitos...</p>;
 
   return (
     <main className="min-h-screen bg-gray-100 p-8">
@@ -21,10 +36,10 @@ export default function HomePage() {
         <div className="space-y-6">
           {habits.length > 0 ? (
             habits.map((habit) => {
-              // Lógica de progreso.
               const progress = Math.min((habit.daysCount / 66) * 100, 100);
-              // Lógica de color.
-              const barColor = habit.daysCount >= 66 ? 'bg-green-500' : 'bg-red-500';
+              // Lógica visual basada en la racha de 66 días.
+              const barColor = habit.daysCount >= 66 ? 'bg-green-500' : 
+                               habit.daysCount >= 21 ? 'bg-yellow-500' : 'bg-red-500';
 
               return (
                 <div key={habit._id || habit.id} className="border-b pb-4 last:border-0">
@@ -52,9 +67,24 @@ export default function HomePage() {
               );
             })
           ) : (
-            <p className="text-center text-gray-500">No hay hábitos registrados aún.</p>
+            <div className="text-center">
+              <p className="text-gray-500 mb-4">No hay hábitos registrados aún.</p>
+              <button 
+                onClick={() => router.push('/dashboard/nuevo')} // Ajustar según ruta de creación.
+                className="text-blue-600 hover:underline"
+              >
+                + Agregar mi primer hábito
+              </button>
+            </div>
           )}
         </div>
+        
+        <button 
+          onClick={() => { localStorage.removeItem('token'); router.push('/login'); }}
+          className="mt-8 text-sm text-red-500 hover:text-red-700 block mx-auto"
+        >
+          Cerrar Sesión
+        </button>
       </div>
     </main>
   );
