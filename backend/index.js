@@ -13,7 +13,7 @@ const app = express();
 
 // Configuración de CORS.
 app.use(cors({
-  origin: '*', // Para la URL del frontend en Vercel.
+  origin: 'https://proyecto-habitos-4zur.vercel.app',
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
   allowedHeaders: ['Content-Type', 'x-auth-token']
 }));
