@@ -10,7 +10,7 @@ export default function RegisterPage() {
     e.preventDefault();
     
     // Petición al endpoint de registro creado en el backend.
-    const res = await fetch('http://localhost:5000/register', {
+    const res = await fetch('https://proyecto-habitos-one.vercel.app/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),

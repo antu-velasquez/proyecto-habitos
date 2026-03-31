@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cors = require('cors'); 
 require('dotenv').config();
 
 const Habit = require('./models/Habit');
@@ -9,6 +10,14 @@ const User = require('./models/User');
 const auth = require('./middleware/auth');
 
 const app = express();
+
+// Configuración de CORS.
+app.use(cors({
+  origin: '*', // Para la URL del frontend en Vercel.
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
+  allowedHeaders: ['Content-Type', 'x-auth-token']
+}));
+
 app.use(express.json());
 
 // Conexión a la base de datos.
@@ -47,7 +56,7 @@ app.post('/login', async (req, res) => {
     } catch (error) { res.status(500).json({ message: error.message }); }
 });
 
-// Obtener solo los hábitos del usuario autenticado.
+// Obtener hábitos del usuario.
 app.get('/habitos', auth, async (req, res) => {
     try {
         const habitos = await Habit.find({ user: req.user.id });
@@ -55,7 +64,7 @@ app.get('/habitos', auth, async (req, res) => {
     } catch (error) { res.status(500).json({ message: error.message }); }
 });
 
-// Crear hábito vinculado al usuario actual.
+// Crear hábito.
 app.post('/habitos', auth, async (req, res) => {
     try {
         const nuevoHabito = new Habit({ ...req.body, user: req.user.id });
@@ -64,7 +73,7 @@ app.post('/habitos', auth, async (req, res) => {
     } catch (error) { res.status(400).json({ message: error.message }); }
 });
 
-// Actualizar racha asegurando propiedad del hábito.
+// Actualizar racha.
 app.patch('/habitos/:id/done', auth, async (req, res) => {
     try {
         const habit = await Habit.findOne({ _id: req.params.id, user: req.user.id });
@@ -84,7 +93,7 @@ app.patch('/habitos/:id/done', auth, async (req, res) => {
     } catch (error) { res.status(400).json({ message: error.message }); }
 });
 
-// Eliminar solo hábitos propios.
+// Eliminar hábito.
 app.delete('/habitos/:id', auth, async (req, res) => {
     try {
         const resultado = await Habit.findOneAndDelete({ _id: req.params.id, user: req.user.id });

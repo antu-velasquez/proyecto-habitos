@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // Obtener solo los hábitos del usuario identificado.
 export const fetchHabits = createAsyncThunk('habits/fetchHabits', async () => {
   const token = localStorage.getItem('token');
-  const response = await fetch('http://localhost:5000/habitos', {
+  const response = await fetch('https://proyecto-habitos-one.vercel.app/habitos', {
     headers: { 'x-auth-token': token } // Enviar el JWT para identificación.
   });
   if (!response.ok) throw new Error('Error al obtener los hábitos');
@@ -13,7 +13,7 @@ export const fetchHabits = createAsyncThunk('habits/fetchHabits', async () => {
 // Registrar un día completado en el servidor.
 export const updateHabitStatus = createAsyncThunk('habits/updateHabitStatus', async (id) => {
   const token = localStorage.getItem('token');
-  const response = await fetch(`http://localhost:5000/habitos/${id}/done`, {
+  const response = await fetch(`https://proyecto-habitos-one.vercel.app/habitos/${id}/done`, {
     method: 'PATCH',
     headers: { 'x-auth-token': token }
   });
@@ -24,7 +24,7 @@ export const updateHabitStatus = createAsyncThunk('habits/updateHabitStatus', as
 // Acción para agregar un nuevo hábito.
 export const addHabit = createAsyncThunk('habits/addHabit', async (newHabit) => {
   const token = localStorage.getItem('token');
-  const response = await fetch('http://localhost:5000/habitos', {
+  const response = await fetch('https://proyecto-habitos-one.vercel.app/habitos', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
