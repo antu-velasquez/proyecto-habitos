@@ -17,7 +17,7 @@ export default function LoginPage() {
     if (res.ok) {
       const data = await res.json();
       localStorage.setItem('token', data.token); // Guardar JWT para enviarlo posteriormente.
-      router.push('/'); // Volver al dashboard.
+      router.push('/'); // Volver al panel.
     } else {
       alert("Credenciales incorrectas");
     }
