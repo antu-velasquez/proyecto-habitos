@@ -1,34 +1,29 @@
 # Proyecto Control de Hábitos.
 
-Aplicación para la gestión de hábitos diarios basada en "Hábitos Atómicos".
+Aplicación para la gestión de hábitos basada en "Hábitos Atómicos", desplegada en la nube.
 
-## Entrega Semana 5.
+## Entrega Semana 6: Despliegue Cloud.
 
-En esta fase se integró un sistema completo de seguridad y autorización:
+En esta fase se migró el entorno local a producción:
 
-* **Seguridad en Backend**: Implementación de un middleware para validar tokens JWT en todas las rutas de hábitos.
-* **Auth desde el Frontend**: Creación de interfaces para registro y login en Next.js que gestionan la persistencia del token.
-* **Envío de JWT**: Configuración de Redux para adjuntar automáticamente el x-auth-token en cada petición al servidor.
-* **Flujo Protegido**: Restricción de acceso al dashboard principal para que solo usuarios logueados puedan ver y gestionar sus hábitos.
+* **Hosting:** Frontend y Backend publicados en **Vercel**.
+* **Base de Datos:** Conexión activa a **MongoDB Atlas**.
+* **Seguridad:** Configuración de variables de entorno (`JWT_SECRET`, `MONGO_URI`) y políticas **CORS**.
+
+## Enlaces del proyecto.
+
+* **Frontend:** [https://proyecto-habitos-4zur.vercel.app](https://proyecto-habitos-4zur.vercel.app)
+* **Backend:** [https://proyecto-habitos-one.vercel.app](https://proyecto-habitos-one.vercel.app)
 
 ## Estructura.
 
-- **/backend**: Servidor en Express.js, seguridad con Bcrypt y conexión a MongoDB Atlas.
-- **/frontend**: Interfaz de usuario en Next.js con gestión de estado en Redux.
+- **/backend**: Servidor Node.js/Express con seguridad JWT.
+- **/frontend**: Interfaz Next.js con gestión de estados.
 
-## Ejecución.
+## Ejecución local.
 
-### 1. Backend.
-1. `cd backend`
-2. `npm install`
-3. `node index.js`
-
-### 2. Frontend.
-1. `cd frontend`
-2. `npm install`
-3. `npm run dev`
-4. Abrir en http://localhost:3000
+1. **Backend:** `npm install` y `node index.js` (requiere archivo `.env`).
+2. **Frontend:** `npm install` y `npm run dev` (abre en localhost:3000).
 
 ---
-
-*Nota: Es necesario configurar el archivo `.env` en el backend con la variable `MONGO_URI` para la conexión.*
+*Nota: El despliegue incluye un archivo `vercel.json` para permitir la comunicación segura entre dominios.*
