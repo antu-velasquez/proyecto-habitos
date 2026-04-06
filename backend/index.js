@@ -13,11 +13,14 @@ const app = express();
 
 // Configuración de CORS.
 app.use(cors({
-  origin: 'https://proyecto-habitos-4zur.vercel.app',
-  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'], 
+  origin: ["https://proyecto-habitos-4zur.vercel.app", "http://localhost:3000"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"],
   credentials: true
 }));
+
+// Preflight.
+app.options('*', cors());
 
 app.use(express.json());
 
