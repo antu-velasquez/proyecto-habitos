@@ -9,25 +9,29 @@ export default function RegisterPage() {
   const handleRegister = async (e) => {
     e.preventDefault();
     
-    // Petición al endpoint de registro creado en el backend.
-    const res = await fetch('https://proyecto-habitos-one.vercel.app/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const res = await fetch('https://proyecto-habitos-4zur.vercel.app/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
 
-    if (res.ok) {
-      alert("Usuario creado con éxito. Ahora puedes iniciar sesión.");
-      router.push('/login'); // Redirigir al login tras el registro.
-    } else {
-      const data = await res.json();
-      alert(data.message || "Error al registrar usuario");
+      if (res.ok) {
+        alert("Usuario creado con éxito. Ahora puedes iniciar sesión.");
+        router.push('/login');
+      } else {
+        const data = await res.json();
+        alert(data.message || "Error al registrar usuario");
+      }
+    } catch (error) {
+      console.error("Error de conexión:", error);
+      alert("No se pudo conectar con el servidor. Verifica tu conexión.");
     }
   };
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <form onSubmit={handleRegister} className="bg-white p-8 rounded-xl shadow-md w-full max-w-sm">
+      <form onSubmit={handleRegister} className="bg-white p-8 rounded-xl shadow-md w-full max-w-sm text-black">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Crear Cuenta</h2>
         
         <div className="mb-4">
@@ -50,7 +54,7 @@ export default function RegisterPage() {
           />
         </div>
 
-        <button className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors">
+        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors">
           Registrarse
         </button>
         
