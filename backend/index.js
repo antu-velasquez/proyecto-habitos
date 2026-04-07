@@ -28,7 +28,8 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Conexión exitosa a MongoDB Atlas'))
     .catch((err) => console.error('Error de conexión:', err));
 
-// Ruta de prueba para verificar que el backend responde
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 app.get('/', (req, res) => {
     res.send('API del Proyecto de Control de Hábitos funcionando correctamente');
 });
@@ -85,9 +86,9 @@ app.patch('/habitos/:id/done', auth, async (req, res) => {
         const hoy = new Date();
         if (habit.lastCompleted) {
             const diff = (hoy - new Date(habit.lastCompleted)) / (1000 * 60 * 60 * 24);
-            habit.daysCount = diff > 1.5 ? 1 : habit.daysCount + 1;
+            habit.count = diff > 1.5 ? 1 : habit.count + 1;
         } else {
-            habit.daysCount = 1;
+            habit.count = 1;
         }
 
         habit.lastCompleted = hoy;
