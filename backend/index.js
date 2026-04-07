@@ -24,9 +24,25 @@ app.use(cors({
 app.options('*', cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('Conexión exitosa a MongoDB Atlas'))
-    .catch((err) => console.error('Error de conexión:', err));
+// Conexión optimizada para Vercel.
+const connectDB = async () => {
+    if (mongoose.connection.readyState >= 1) return;
+    
+    try {
+        await mongoose.connect(process.env.MONGO_URI, {
+            bufferCommands: false, // Desactiva el buffering para evitar error de timeout.
+        });
+        console.log('Conexión exitosa a MongoDB Atlas');
+    } catch (err) {
+        console.error('Error de conexión:', err);
+    }
+};
+
+// Middleware para asegurar conexión en cada petición.
+app.use(async (req, res, next) => {
+    await connectDB();
+    next();
+});
 
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
